@@ -15,6 +15,7 @@ namespace Music.Api
             CreateMap<RolePostModel, RoleDTO>();
             CreateMap<UserPutModel, UserDTO>();
             CreateMap<FilePutModel, FileDTO>();
+            CreateMap<LoginModel, UserDTO>();
         }
     }
 }

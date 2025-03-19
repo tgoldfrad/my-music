@@ -95,9 +95,6 @@ const Auth = () => {
                     <form onSubmit={handleSubmit}>
                         <TextField type="password" label='password' inputRef={passwordRef} />
                         <TextField type="text" label='email' inputRef={emailRef} />
-                        {status === '/register'&&
-                        <TextField type="text" label='email' inputRef={emailRef} />
-                        }
                         <Button type="submit" color="primary" variant="contained" sx={{ backgroundColor: '#ce9575', '&:hover': { backgroundColor: '#b68b65' }}}>Login</Button>
                     </form>
                 </Box>

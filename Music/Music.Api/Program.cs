@@ -15,47 +15,45 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.ServiceDependencyInjector();
 
-//builder.Services.AddDbContext<DataContext>(options =>
-//{
-//    var connectionString = Environment.GetEnvironmentVariable("MYSQL_CONNECTION_STRING");
-//    //options.UseMySql("server = bgb9ojh8gaxhvg5hmvb9 - mysql.services.clever - cloud.com; database = bgb9ojh8gaxhvg5hmvb9; user = usjr0zjxfvslhjvf; password = ZlbVNmJxxCriv0AuAAMw");
-//    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
-//});
+
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     options.JsonSerializerOptions.WriteIndented = true;
 });
+
+//
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Name = "Authorization",
+        Description = "Bearer Authentication with JWT Token",
+        Type = SecuritySchemeType.Http
+    });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Id = "Bearer",
+                    Type = ReferenceType.SecurityScheme
+                }
+            },
+            new List<string>()
+        }
+    });
+});
+//
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 
 builder.Services.AddOpenApi();
-//builder.Services.AddSwaggerGen(options =>
-//{
-//    options.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
-//    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-//    {
-//        Scheme = "Bearer",
-//        BearerFormat = "JWT",
-//        In = ParameterLocation.Header,
-//        Name = "Authorization",
-//        Description = "Bearer Authentication with JWT Token",
-//        Type = SecuritySchemeType.Http
-//    });
-//    options.AddSecurityRequirement(new OpenApiSecurityRequirement
-//    {
-//        {
-//            new OpenApiSecurityScheme
-//            {
-//                Reference = new OpenApiReference
-//                {
-//                    Id = "Bearer",
-//                    Type = ReferenceType.SecurityScheme
-//                }
-//            },
-//            new List<string>()
-//        }
-//    });
-//});
 
 builder.Services.AddCors(opt => opt.AddPolicy("MyPolicy", policy =>
 {
@@ -104,9 +102,13 @@ if (app.Environment.IsDevelopment())
     {
         options.SwaggerEndpoint("/openapi/v1.json", "OpenAPI V1");
     });
+
 }
+
+
 builder.Services.AddEndpointsApiExplorer();//
 app.UseHttpsRedirection();//
+app.UseRouting();
 app.UseAuthentication();//
 
 app.UseAuthorization();
@@ -114,3 +116,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+
+

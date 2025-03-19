@@ -19,9 +19,9 @@ namespace Music.Core
             CreateMap<ConversionProcess, ConversionProcessDTO>().ReverseMap();
             CreateMap<Role, RoleDTO>().ReverseMap();
             CreateMap<User, UserDTO>()
-            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Role.Name))
+            .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role.Name))
             .ReverseMap()
-            .ForMember(dest => dest.Role, opt => opt.MapFrom(src => new Role { Name = src.Name }));
+            .ForMember(dest => dest.Role, opt => opt.MapFrom(src => new Role { Name = src.Role }));
         }
     }
 }
