@@ -61,8 +61,9 @@ namespace Music.Service
                 throw new KeyNotFoundException();
             if (!user.Password.Equals(userDto.Password))
                 throw new UnauthorizedAccessException();
+            var role = await _repositoryManager.Roles.GetByIdAsync(user.RoleId);
+            string token = GenerateJwtToken(user.Name, user.Id, [role.Name]);
             userDto = _mapper.Map<UserDTO>(user);
-            string token = GenerateJwtToken(userDto.Name, userDto.Id, [userDto.Role]);
             return new UserWithTokenDTO { UserDto = userDto, Token = token };
         }
         public async Task<UserWithTokenDTO> RegisterAsync(UserDTO userDto)
@@ -70,6 +71,9 @@ namespace Music.Service
             var role = await _repositoryManager.Roles.GetByNameAsync(userDto.Role);
             if (role == null || string.IsNullOrEmpty(userDto.Email) || string.IsNullOrEmpty(userDto.Password))
                 throw new ArgumentException();
+            var userByEmail = await _repositoryManager.Users.GetByEmailAsync(userDto.Email);
+            if (userByEmail != null)
+                throw new InvalidOperationException();
             var user = _mapper.Map<User>(userDto);
             user.Role = role;
             user = await _repositoryManager.Users.AddAsync(user);
@@ -84,7 +88,12 @@ namespace Music.Service
             var u = await _repositoryManager.Users.GetByIdAsync(id);
             if(u==null)
                 throw new KeyNotFoundException();
-            var role = await _repositoryManager.Roles.GetByNameAsync(userDto.Role);
+
+            var userByEmail = await _repositoryManager.Users.GetByEmailAsync(userDto.Email);
+            if (userByEmail == null && userByEmail.Id != id)
+                throw new InvalidOperationException();
+
+            var role = await _repositoryManager.Roles.GetByIdAsync(u.RoleId);
             if (role == null || string.IsNullOrEmpty(userDto.Email) || string.IsNullOrEmpty(userDto.Password))
                 throw new ArgumentException(); 
             var user = _mapper.Map<User>(userDto);

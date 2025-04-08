@@ -24,6 +24,7 @@ namespace Music.Api
             services.AddScoped<IConversionProcessService, ConversionProcessService>();
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IAWSService, AWSService>();
 
             services.AddAutoMapper(typeof(MappingPostProfile));
             services.AddAutoMapper(typeof(MappingProfile));

@@ -35,7 +35,7 @@ namespace Music.Data.Repositories
         }
         public async Task<User> GetByEmailAsync(string email)
         {
-            return await _users.Where(u => u.Equals(email)).FirstOrDefaultAsync();
+            return await _users.Where(u => u.Email.Equals(email)).FirstOrDefaultAsync();
         }
         public async Task<IEnumerable<File>> GetFilesAsync(int id)
         {

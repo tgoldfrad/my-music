@@ -1,12 +1,11 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { ConversionType } from "../types/ConversionType";
-
-const baseUrl = "/conversions"; 
+import apiClient from "../apiClient";
 
 export const getAllConversions = createAsyncThunk('conversions/getAll', async (_, thunkAPI) => {
     try {
-        const response = await axios.get(baseUrl);
+        const response = await apiClient.get('conversionprocess');
         return response.data as ConversionType[];
     } catch (e) {
         return thunkAPI.rejectWithValue(e);
@@ -15,7 +14,7 @@ export const getAllConversions = createAsyncThunk('conversions/getAll', async (_
 
 export const getConversionById = createAsyncThunk('conversions/getById', async (conversionId: number, thunkAPI) => {
     try {
-        const response = await axios.get(`${baseUrl}/${conversionId}`);
+        const response = await apiClient.get(`conversionprocess/${conversionId}`);
         return response.data as ConversionType;
     } catch (e) {
         return thunkAPI.rejectWithValue(e);
@@ -24,7 +23,7 @@ export const getConversionById = createAsyncThunk('conversions/getById', async (
 
 export const addConversion = createAsyncThunk('conversions/add', async (conversion: Partial<ConversionType>, thunkAPI) => {
     try {
-        const response = await axios.post(baseUrl, conversion);
+        const response = await apiClient.post('conversionprocess', conversion);
         return response.data;
     } catch (e) {
         return thunkAPI.rejectWithValue(e);
@@ -33,7 +32,7 @@ export const addConversion = createAsyncThunk('conversions/add', async (conversi
 
 export const updateConversion = createAsyncThunk('conversions/update', async ({ conversionId, conversion }: { conversionId: number, conversion: ConversionType }, thunkAPI) => {
     try {
-        const response = await axios.put(`${baseUrl}/${conversionId}`, conversion);
+        const response = await apiClient.put(`conversionprocess/${conversionId}`, conversion);
         return response.data;
     } catch (e) {
         return thunkAPI.rejectWithValue(e);
@@ -42,7 +41,7 @@ export const updateConversion = createAsyncThunk('conversions/update', async ({ 
 
 export const deleteConversion = createAsyncThunk('conversions/delete', async (conversionId: number, thunkAPI) => {
     try {
-        const response = await axios.delete(`${baseUrl}/${conversionId}`);
+        const response = await apiClient.delete(`conversionprocess/${conversionId}`);
         return response.data;
     } catch (e) {
         return thunkAPI.rejectWithValue(e);

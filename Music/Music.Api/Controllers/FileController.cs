@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using Amazon.S3;
+using Amazon.S3.Model;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Music.Api.PostModels;
@@ -19,10 +21,13 @@ namespace Music.Api.Controllers
     {
         private readonly IFileService _fileService;
         private readonly IMapper _mapper;
-        public FileController(IFileService fileService, IMapper mapper)
+        private readonly IAWSService _awsService;
+
+        public FileController(IFileService fileService, IMapper mapper, IAWSService awsService)
         {
             _fileService = fileService;
             _mapper = mapper;
+            _awsService = awsService;
         }
         // GET: api/<FileController>
         [HttpGet]
@@ -37,7 +42,7 @@ namespace Music.Api.Controllers
         [Authorize]
         public async Task<ActionResult<FileDTO>> Get(int id)
         {
-            if (id <= 0)
+            if (id < 0)
                 return BadRequest();
             var file = await _fileService.GetByIdAsync(id);
             if (file == null)
@@ -52,18 +57,18 @@ namespace Music.Api.Controllers
         [Authorize]
         public async Task<ActionResult<FileDTO>> Post([FromBody] FilePostModel file)
         {
-            var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-            var handler = new JwtSecurityTokenHandler();
-            var jwtToken = handler.ReadJwtToken(token);
-            var userIdClaim = jwtToken.Claims.FirstOrDefault(c=>c.Type=="userId");
-            if(userIdClaim == null)
-                return Unauthorized();
-            var userId = userIdClaim.Value;
+            //var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            //var handler = new JwtSecurityTokenHandler();
+            //var jwtToken = handler.ReadJwtToken(token);
+            //var userIdClaim = jwtToken.Claims.FirstOrDefault(c=>c.Type=="userId");
+            //if(userIdClaim == null)
+            //    return Unauthorized();
+            //var userId = userIdClaim.Value;
 
             if (file == null)
                 return BadRequest("No file Provided");
             var fileDto = _mapper.Map<FileDTO>(file);
-            fileDto.CreatedBy = int.Parse(userId);
+            //fileDto.CreatedBy = int.Parse(userId);
 
             try
             {
@@ -85,7 +90,7 @@ namespace Music.Api.Controllers
         [Authorize]
         public async Task<ActionResult<FileDTO>> Put(int id, [FromBody] FilePutModel file)
         {
-            if (id <= 0)
+            if (id < 0)
                 return BadRequest();
             var fileDto = _mapper.Map<FileDTO>(file);
             try
@@ -112,7 +117,7 @@ namespace Music.Api.Controllers
         [Authorize]
         public async Task<ActionResult<FileDTO>> Delete(int id)
         {
-            if (id <= 0)
+            if (id < 0)
                 return BadRequest();
             try
             {
@@ -127,6 +132,27 @@ namespace Music.Api.Controllers
             {
                 return StatusCode(500, "Internal server error");
             }
+        }
+        [HttpGet("presigned-url")]
+        [Authorize]
+        public async Task<ActionResult<string>> GetPreSignedUrl([FromQuery] int userId, [FromQuery] string fileName, [FromQuery] string contentType)
+        {
+            if(string.IsNullOrEmpty(fileName)||string.IsNullOrEmpty(contentType))
+                return BadRequest("Invalid file data");
+
+            var url = await _awsService.GetPreSignedUrlAsync(userId,fileName,contentType);
+            return Ok(new { url });
+         }
+
+        [HttpGet("download-url")]
+        [Authorize]
+        public async Task<ActionResult<string>> GetDownladUrl([FromQuery] int userId, [FromQuery] string fileName)
+        {
+            if (string.IsNullOrEmpty(fileName))
+                return BadRequest("Invalid file data");
+
+            var url = await _awsService.GetDownloadUrlAsync(userId, fileName);
+            return Ok(new { url });
         }
     }
 }

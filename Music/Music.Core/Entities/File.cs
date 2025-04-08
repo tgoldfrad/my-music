@@ -28,6 +28,7 @@ namespace Music.Core.Entities
         [Column(TypeName = "decimal(18,4)")]
         public decimal Size { get; set; }
         public bool IsUser { get; set; }
+        //public bool IsDeleted { get; set; } = false;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
 

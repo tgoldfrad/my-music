@@ -64,8 +64,8 @@ namespace Music.Service
         }
         static bool IsValidFileType(string type)
         {
-            string[] validExtensions = { "pdf", "mp3" };
-            type = type.ToLower();
+            string[] validExtensions = { "pdf", "mp3","mpeg","jpg" };
+            type = type.ToLower().Split('/')[1];
             return Array.Exists(validExtensions, validExtension => validExtension == type);
         }
     }

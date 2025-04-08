@@ -1,12 +1,16 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { LoginType, UserType } from "../types/UserType";
+import apiClient from "../apiClient";
+import { FileType } from "../types/FileType";
 
-const baseUrl = "/users";
-export const getAllUsers = createAsyncThunk('users/getAll',async (_, thunkAPI)=>{
+const baseUrl = 'http://localhost:5035/api/auth'
+
+
+export const getFilesByUser = createAsyncThunk('users/getFiles',async (userId:number, thunkAPI)=>{
     try{
-        const response = await axios.get(baseUrl);
-        return response.data as UserType[];
+        const response = await apiClient.get(`user/${userId}/files`);
+        return response.data as FileType[];
     }catch(e){
         return thunkAPI.rejectWithValue(e);
     }
@@ -14,14 +18,14 @@ export const getAllUsers = createAsyncThunk('users/getAll',async (_, thunkAPI)=>
 
 export const getUserById = createAsyncThunk('users/getById',async (userId:number, thunkAPI)=>{
     try{
-        const response = await axios.get(`${baseUrl}/${userId}`);
+        const response = await apiClient.get(`user/${userId}`);
         return response.data as UserType;
     }catch(e){
         return thunkAPI.rejectWithValue(e);
     }
 });
 
-export const register = createAsyncThunk('users/register',async (user: Partial<UserType>, thunkAPI)=>{
+export const registration = createAsyncThunk('users/register',async (user: Partial<UserType>, thunkAPI)=>{
     try{
         const response = await axios.post(`${baseUrl}/register`,user);
         return response.data;
@@ -41,7 +45,7 @@ export const login = createAsyncThunk('users/login',async (user: LoginType, thun
 
 export const updateUser = createAsyncThunk('users/update',async ({userId,user}:{userId:number,user: UserType}, thunkAPI)=>{
     try{
-        const response = await axios.put(`${baseUrl}/${userId}`,user);
+        const response = await apiClient.put(`auth/${userId}`,user);
         return response.data;
     }catch(e){
         return thunkAPI.rejectWithValue(e);
@@ -50,7 +54,7 @@ export const updateUser = createAsyncThunk('users/update',async ({userId,user}:{
 
 export const deleteUser = createAsyncThunk('users/delete',async (userId:number, thunkAPI)=>{
     try{
-        const response = await axios.delete(`${baseUrl}/${userId}`);
+        const response = await apiClient.delete(`user/${userId}`);
         return response.data;
     }catch(e){
         return thunkAPI.rejectWithValue(e);
@@ -65,20 +69,6 @@ const usersSlice = createSlice({
  
     extraReducers:(builder)=>{
         builder
-        .addCase(getAllUsers.pending,(state)=>{
-            state.loading = true;
-            state.error = null;
-        })
-       .addCase(getAllUsers.fulfilled, (state, action) => {
-            state.loading = false;
-            state.list = [...action.payload]
-            state.selectedUser = null;
-        })
-        .addCase(getAllUsers.rejected, (state, action) => {
-            state.loading = false;
-            state.error = action.payload as string;
-        })
-
         .addCase(getUserById.pending,(state)=>{
             state.loading = true;
             state.error = null;
@@ -92,16 +82,16 @@ const usersSlice = createSlice({
             state.error = action.payload as string;
         })
 
-        .addCase(register.pending,(state)=>{
+        .addCase(registration.pending,(state)=>{
             state.loading = true;
             state.error = null;
         })
-        .addCase(register.fulfilled, (state, action) => {
+        .addCase(registration.fulfilled, (state, action) => {
             state.loading = false;
             state.list.push(action.payload)
             state.selectedUser = action.payload;
         })
-        .addCase(register.rejected, (state, action) => {
+        .addCase(registration.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload as string;
         })

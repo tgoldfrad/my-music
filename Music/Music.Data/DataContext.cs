@@ -24,9 +24,10 @@ namespace Music.Data
                 .WithMany(p => p.Roles)
                 .UsingEntity(j => j.ToTable("RolePermissions"));
         }
+        //var connectionString = "server=bgb9ojh8gaxhvg5hmvb9-mysql.services.clever-cloud.com;user=usjr0zjxfvslhjvf;password=ZlbVNmJxxCriv0AuAAMw;database=bgb9ojh8gaxhvg5hmvb9;";
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var connectionString = "server=bgb9ojh8gaxhvg5hmvb9-mysql.services.clever-cloud.com;user=usjr0zjxfvslhjvf;password=ZlbVNmJxxCriv0AuAAMw;database=bgb9ojh8gaxhvg5hmvb9;";
+            var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
             optionsBuilder.UseMySql(connectionString,ServerVersion.AutoDetect(connectionString));
         }
         //public DataContext(DbContextOptions<DataContext> options) : base(options)

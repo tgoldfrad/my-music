@@ -1,6 +1,6 @@
 export type FileType = {
     id: number,
-    userId: number,
+    createdBy: number,
     name: string,
     path: string,
     type: string,

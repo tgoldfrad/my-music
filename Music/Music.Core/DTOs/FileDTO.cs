@@ -23,6 +23,7 @@ namespace Music.Core.DTOs
 
         public decimal Size { get; set; }
         public bool IsUser { get; set; }
+        //public bool IsDeleted { get; set; }
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
     }

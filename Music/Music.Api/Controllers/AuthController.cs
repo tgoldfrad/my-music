@@ -27,7 +27,7 @@ namespace Music.Api.Controllers
             _mapper = mapper;
         }
         [HttpPost("login")]
-        [Authorize]
+        //[Authorize]
         public async Task<ActionResult<UserWithTokenDTO>> Login([FromBody] LoginModel value)
         {
             if (value == null)
@@ -67,6 +67,10 @@ namespace Music.Api.Controllers
             {
                 return BadRequest("Invalid user data.");
             }
+            catch (InvalidOperationException)
+            {
+                return Conflict("Email already exist");
+            }
             catch (Exception)
             {
                 return StatusCode(500, "Internal server error");
@@ -76,7 +80,7 @@ namespace Music.Api.Controllers
         [Authorize]
         public async Task<ActionResult<UserWithTokenDTO>> Put(int id, [FromBody] UserPutModel user)
         {
-            if (id <= 0)
+            if (id < 0)
                 return BadRequest();
             var userDto = _mapper.Map<UserDTO>(user);
 
@@ -97,6 +101,10 @@ namespace Music.Api.Controllers
             catch (KeyNotFoundException)
             {
                 return NotFound("User not found");
+            }
+            catch (InvalidOperationException)
+            {
+                return Conflict("Email already exist");
             }
             catch (ArgumentException)
             {

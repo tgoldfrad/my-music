@@ -7,7 +7,7 @@ namespace Music.Api
 {
     public class MappingPostProfile : Profile
     {
-        protected MappingPostProfile()
+        public MappingPostProfile()
         {
             CreateMap<UserPostModel, UserDTO>();
             CreateMap<FilePostModel, FileDTO>();

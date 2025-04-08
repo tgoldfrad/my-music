@@ -30,7 +30,7 @@ namespace Music.Data.Repositories
         }
         public async Task<Role> GetByNameAsync(string name)
         {
-            return await _roles.Where(u => u.Equals(name)).FirstOrDefaultAsync();
+            return await _roles.Where(r => r.Name.Equals(name)).FirstOrDefaultAsync();
 
         }
 

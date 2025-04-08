@@ -39,7 +39,7 @@ namespace Music.Api.Controllers
         [Authorize]
         public async Task<ActionResult<UserDTO>> Get(int id)
         {
-            if (id <= 0)
+            if (id < 0)
                 return BadRequest();
             var user = await _userService.GetByIdAsync(id);
             if (user == null)
@@ -105,7 +105,7 @@ namespace Music.Api.Controllers
         [Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult<UserDTO>> Delete(int id)
         {
-            if (id <= 0)
+            if (id < 0)
                 return BadRequest();
             try
             {

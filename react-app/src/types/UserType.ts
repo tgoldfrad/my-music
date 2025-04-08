@@ -4,7 +4,7 @@ export type UserType = {
     name: string,
     email: string,
     password: string,
-    role: 'user' | 'admin',
+    role: 'User' | 'Admin',
     createdAt?: Date,
     updatedAt?: Date,
 }

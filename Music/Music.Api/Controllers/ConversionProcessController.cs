@@ -32,7 +32,7 @@ namespace Music.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ConversionProcessDTO>> Get(int id)
         {
-            if (id <= 0)
+            if (id < 0)
                 return BadRequest();
             var conversionProcess = await _conversionProcessService.GetByIdAsync(id);
             if (conversionProcess == null)
@@ -57,7 +57,7 @@ namespace Music.Api.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<ConversionProcessDTO>> Put(int id, [FromBody] ConversionProcessPostModel conversionProcess)
         {
-            if (id <= 0)
+            if (id < 0)
                 return BadRequest();
             var conversionProcessDto = _mapper.Map<ConversionProcessDTO>(conversionProcess);
             conversionProcessDto = await _conversionProcessService.UpdateAsync(id, conversionProcessDto);
@@ -70,7 +70,7 @@ namespace Music.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<ConversionProcessDTO>> Delete(int id)
         {
-            if (id <= 0)
+            if (id < 0)
                 return BadRequest();
             var conversionProcessDto = await _conversionProcessService.DeleteAsync(id);
             if (conversionProcessDto != null)

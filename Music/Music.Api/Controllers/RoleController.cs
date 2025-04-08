@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Music.Api.PostModels;
 using Music.Api.PutModels;
@@ -23,6 +24,7 @@ namespace Music.Api.Controllers
         }
         // GET: api/<RoleController>
         [HttpGet]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult<IEnumerable<RoleDTO>>> Get()
         {
             return Ok(await _roleService.GetAllAsync());
@@ -30,9 +32,10 @@ namespace Music.Api.Controllers
 
         // GET api/<RoleController>/5
         [HttpGet("{id}")]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult<RoleDTO>> Get(int id)
         {
-            if (id <= 0)
+            if (id < 0)
                 return BadRequest();
             var role = await _roleService.GetByIdAsync(id);
             if (role == null)
@@ -42,6 +45,8 @@ namespace Music.Api.Controllers
             return role;
         }
         [HttpGet("name/{id}")]
+        [Authorize(Policy = "AdminOnly")]
+
         public async Task<ActionResult<RoleDTO>> Get(string name)
         {
             if (string.IsNullOrEmpty(name))
@@ -55,6 +60,8 @@ namespace Music.Api.Controllers
         }
         // POST api/<RoleController>
         [HttpPost]
+        [Authorize(Policy = "AdminOnly")]
+
         public async Task<ActionResult<RoleDTO>> Post([FromBody] RolePostModel role)
         {
             var roleDto = _mapper.Map<RoleDTO>(role);
@@ -66,9 +73,11 @@ namespace Music.Api.Controllers
 
         // PUT api/<RoleController>/5
         [HttpPut("{id}")]
+        [Authorize(Policy = "AdminOnly")]
+
         public async Task<ActionResult<RoleDTO>> Put(int id, [FromBody] RolePostModel role)
         {
-            if (id <= 0)
+            if (id < 0)
                 return BadRequest();
             var roleDto = _mapper.Map<RoleDTO>(role);
             roleDto = await _roleService.UpdateAsync(id, roleDto);
@@ -79,9 +88,10 @@ namespace Music.Api.Controllers
 
         // DELETE api/<RoleController>/5
         [HttpDelete("{id}")]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult<RoleDTO>> Delete(int id)
         {
-            if (id <= 0)
+            if (id < 0)
                 return BadRequest();
             var roleDto = await _roleService.DeleteAsync(id);
             if (roleDto != null)
